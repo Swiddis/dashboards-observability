@@ -1,0 +1,12 @@
+[
+    {
+        "CacheClusterId": "logslowxxxxmsxj", 
+        "CacheNodeId": "0001", 
+        "Id": 296, 
+        "Timestamp": 1605631822, 
+        "Duration (us)": 0, 
+        "Command": "GET ... (1 more arguments)", 
+        "ClientAddress": "192.168.12.104:55452", 
+        "ClientName": "logslowxxxxmsxj##" 
+      }
+]

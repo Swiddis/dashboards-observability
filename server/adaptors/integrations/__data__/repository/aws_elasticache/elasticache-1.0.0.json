@@ -1,0 +1,18 @@
+{
+    "name": "aws-elasticache",
+    "version": "1.0.0",
+    "displayName": "AWS Elasticache Dashboard",
+    "license": "Apache-2.0",
+    "type": "logs",
+    "author": "OpenSearch",
+    "components": [
+        {
+            "name": "logs",
+            "version": "1.0.0"
+        }
+    ],
+    "assets": {},
+    "sampleData": {
+        "path": "sample.json"
+    }
+}
