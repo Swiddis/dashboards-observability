@@ -88,6 +88,9 @@ export function AvailableIntegrationOverviewPage(props: AvailableIntegrationOver
   }
 
   const helper = items.filter((item) => item.checked).map((x) => x.name);
+  const derivedTags = (item: { name: string }): string[] => {
+    return item.name.split('_')[0].split('-');
+  };
 
   const button = (
     <EuiFilterButton
@@ -118,7 +121,7 @@ export function AvailableIntegrationOverviewPage(props: AvailableIntegrationOver
 
       let newItems = exists.data.hits
         .flatMap((hit: { components: Array<{ name: string }> }) => hit.components)
-        .map((component: { name: string }) => component.name);
+        .flatMap((component: { name: string }) => derivedTags(component));
       newItems = [...new Set(newItems)].sort().map((newItem) => {
         return {
           name: newItem,
@@ -184,7 +187,9 @@ export function AvailableIntegrationOverviewPage(props: AvailableIntegrationOver
           ? AvailableIntegrationsCardView({
               data: {
                 hits: data.hits.filter((hit) =>
-                  helper.every((compon) => hit.components.map((x) => x.name).includes(compon))
+                  helper.every((compon) =>
+                    hit.components.flatMap((x) => derivedTags(x)).includes(compon)
+                  )
                 ),
               },
               isCardView,
@@ -198,7 +203,9 @@ export function AvailableIntegrationOverviewPage(props: AvailableIntegrationOver
               loading: false,
               data: {
                 hits: data.hits.filter((hit) =>
-                  helper.every((compon) => hit.components.map((x) => x.name).includes(compon))
+                  helper.every((compon) =>
+                    hit.components.flatMap((x) => derivedTags(x)).includes(compon)
+                  )
                 ),
               },
               isCardView,
