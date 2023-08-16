@@ -24,6 +24,8 @@ import { EuiLoadingSpinner } from '@elastic/eui';
 import { useToast } from '../../../../public/components/common/toast';
 import { coreRefs } from '../../../../public/framework/core_refs';
 
+// Since it's not exported upstream, we have to re-declare common/toast/Color
+type Color = 'success' | 'primary' | 'warning' | 'danger' | undefined;
 interface IntegrationFlyoutProps {
   onClose: () => void;
   onCreate: (name: string, dataSource: string) => void;
@@ -187,10 +189,82 @@ const doExistingDataSourceValidation = async (
   return validationResult;
 };
 
+const formContent = (
+  isDataSourceValid: boolean | null,
+  errors: string[],
+  onDatasourceChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  dataSource: string,
+  integrationName: string,
+  integrationType: string,
+  setErrors: React.Dispatch<React.SetStateAction<string[]>>,
+  setToast: (title: string, color?: Color, text?: string | undefined) => void,
+  setDataSourceValid: React.Dispatch<React.SetStateAction<boolean | null>>,
+  onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  name: string
+) => {
+  return (
+    <div>
+      <EuiFormRow
+        label="Index name or wildcard pattern"
+        helpText="Input an index name or wildcard pattern that your integration will query."
+        isInvalid={isDataSourceValid === false}
+        error={errors}
+        labelAppend={
+          <EuiText size="xs">
+            <EuiLink
+              href="https://opensearch.org/docs/latest/integrations/index"
+              external={true}
+              target="_blank"
+            >
+              Learn More
+            </EuiLink>
+          </EuiText>
+        }
+      >
+        <EuiFieldText
+          data-test-subj="data-source-name"
+          name="first"
+          onChange={(e) => onDatasourceChange(e)}
+          value={dataSource}
+          isInvalid={isDataSourceValid === false}
+          append={
+            <EuiButton
+              data-test-subj="validateIndex"
+              onClick={async () => {
+                const validationResult = await doExistingDataSourceValidation(
+                  dataSource,
+                  integrationName,
+                  integrationType,
+                  setErrors
+                );
+                if (validationResult) {
+                  setToast('Index name or wildcard pattern is valid', 'success');
+                }
+                setDataSourceValid(validationResult);
+              }}
+              disabled={dataSource.length === 0}
+            >
+              Validate
+            </EuiButton>
+          }
+        />
+      </EuiFormRow>
+      <EuiFormRow label="Name" helpText="This will be used to label the newly added integration.">
+        <EuiFieldText
+          data-test-subj="new-instance-name"
+          name="first"
+          onChange={(e) => onNameChange(e)}
+          value={name}
+        />
+      </EuiFormRow>
+    </div>
+  );
+};
+
 export function AddIntegrationFlyout(props: IntegrationFlyoutProps) {
   const { onClose, onCreate, integrationName, integrationType } = props;
 
-  const [isDataSourceValid, setDataSourceValid] = useState<null | false | true>(null);
+  const [isDataSourceValid, setDataSourceValid] = useState<null | boolean>(null);
 
   const { setToast } = useToast();
 
@@ -212,70 +286,24 @@ export function AddIntegrationFlyout(props: IntegrationFlyoutProps) {
     return <EuiLoadingSpinner />;
   }
 
-  const formContent = () => {
-    return (
-      <div>
-        <EuiFormRow
-          label="Index name or wildcard pattern"
-          helpText="Input an index name or wildcard pattern that your integration will query."
-          isInvalid={isDataSourceValid === false}
-          error={errors}
-          labelAppend={
-            <EuiText size="xs">
-              <EuiLink
-                href="https://opensearch.org/docs/latest/integrations/index"
-                external={true}
-                target="_blank"
-              >
-                Learn More
-              </EuiLink>
-            </EuiText>
-          }
-        >
-          <EuiFieldText
-            data-test-subj="data-source-name"
-            name="first"
-            onChange={(e) => onDatasourceChange(e)}
-            value={dataSource}
-            isInvalid={isDataSourceValid === false}
-            append={
-              <EuiButton
-                data-test-subj="validateIndex"
-                onClick={async () => {
-                  const validationResult = await doExistingDataSourceValidation(
-                    dataSource,
-                    integrationName,
-                    integrationType,
-                    setErrors
-                  );
-                  if (validationResult) {
-                    setToast('Index name or wildcard pattern is valid', 'success');
-                  }
-                  setDataSourceValid(validationResult);
-                }}
-                disabled={dataSource.length === 0}
-              >
-                Validate
-              </EuiButton>
-            }
-          />
-        </EuiFormRow>
-        <EuiFormRow label="Name" helpText="This will be used to label the newly added integration.">
-          <EuiFieldText
-            data-test-subj="new-instance-name"
-            name="first"
-            onChange={(e) => onNameChange(e)}
-            value={name}
-          />
-        </EuiFormRow>
-      </div>
-    );
-  };
-
   const renderContent = () => {
     return (
       <>
-        <EuiForm component="form">{formContent()}</EuiForm>
+        <EuiForm component="form">
+          {formContent(
+            isDataSourceValid,
+            errors,
+            onDatasourceChange,
+            dataSource,
+            integrationName,
+            integrationType,
+            setErrors,
+            setToast,
+            setDataSourceValid,
+            onNameChange,
+            name
+          )}
+        </EuiForm>
       </>
     );
   };
