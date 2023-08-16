@@ -20,15 +20,15 @@ import {
   EuiTitle,
 } from '@elastic/eui';
 import React, { useState } from 'react';
-import { HttpSetup, HttpStart } from '../../../../../../src/core/public';
+import { EuiLoadingSpinner } from '@elastic/eui';
 import { useToast } from '../../../../public/components/common/toast';
+import { coreRefs } from '../../../../public/framework/core_refs';
 
 interface IntegrationFlyoutProps {
   onClose: () => void;
   onCreate: (name: string, dataSource: string) => void;
   integrationName: string;
   integrationType: string;
-  http: HttpStart;
 }
 
 export const doTypeValidation = (toCheck: any, required: any): boolean => {
@@ -114,11 +114,10 @@ const checkDataSourceName = (
 };
 
 const fetchDataSourceMappings = async (
-  targetDataSource: string,
-  http: HttpSetup
+  targetDataSource: string
 ): Promise<{ [key: string]: { properties: any } } | null> => {
-  return http
-    .post('/api/console/proxy', {
+  return coreRefs
+    .http!.post('/api/console/proxy', {
       query: {
         path: `${targetDataSource}/_mapping`,
         method: 'GET',
@@ -138,11 +137,10 @@ const fetchDataSourceMappings = async (
 };
 
 const fetchIntegrationMappings = async (
-  targetName: string,
-  http: HttpSetup
+  targetName: string
 ): Promise<{ [key: string]: { template: { mappings: { properties?: any } } } } | null> => {
-  return http
-    .get(`/api/integrations/repository/${targetName}/schema`)
+  return coreRefs
+    .http!.get(`/api/integrations/repository/${targetName}/schema`)
     .then((response: { statusCode?: number; data: any }) => {
       if (response.statusCode && response.statusCode !== 200) {
         throw new Error('Failed to retrieve Integration schema', { cause: response });
@@ -159,7 +157,6 @@ const doExistingDataSourceValidation = async (
   targetDataSource: string,
   integrationName: string,
   integrationType: string,
-  http: HttpSetup,
   setErrors: React.Dispatch<React.SetStateAction<string[]>>
 ): Promise<boolean> => {
   const validationErrors: string[] = [];
@@ -167,8 +164,8 @@ const doExistingDataSourceValidation = async (
     return false;
   }
   const [dataSourceMappings, integrationMappings] = await Promise.all([
-    fetchDataSourceMappings(targetDataSource, http),
-    fetchIntegrationMappings(integrationName, http),
+    fetchDataSourceMappings(targetDataSource),
+    fetchIntegrationMappings(integrationName),
   ]);
   if (!dataSourceMappings) {
     validationErrors.push('Provided data stream could not be retrieved');
@@ -191,7 +188,7 @@ const doExistingDataSourceValidation = async (
 };
 
 export function AddIntegrationFlyout(props: IntegrationFlyoutProps) {
-  const { onClose, onCreate, integrationName, integrationType, http } = props;
+  const { onClose, onCreate, integrationName, integrationType } = props;
 
   const [isDataSourceValid, setDataSourceValid] = useState<null | false | true>(null);
 
@@ -209,6 +206,11 @@ export function AddIntegrationFlyout(props: IntegrationFlyoutProps) {
   const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
+
+  if (coreRefs.http === undefined) {
+    console.error('Fatal: No HTTP connector available. We need this to make API requests.');
+    return <EuiLoadingSpinner />;
+  }
 
   const formContent = () => {
     return (
@@ -244,7 +246,6 @@ export function AddIntegrationFlyout(props: IntegrationFlyoutProps) {
                     dataSource,
                     integrationName,
                     integrationType,
-                    http,
                     setErrors
                   );
                   if (validationResult) {
