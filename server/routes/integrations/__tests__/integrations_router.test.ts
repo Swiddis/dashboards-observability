@@ -20,11 +20,10 @@ describe('Data wrapper', () => {
   };
 
   it('retrieves data from the callback method', async () => {
-    const callback = jest.fn((_) => {
+    const callback = jest.fn(() => {
       return { test: 'data' };
     });
     const result = await handleWithCallback(
-      adaptorMock as IntegrationsAdaptor,
       responseMock as OpenSearchDashboardsResponseFactory,
       callback
     );
@@ -35,11 +34,10 @@ describe('Data wrapper', () => {
   });
 
   it('passes callback errors through', async () => {
-    const callback = jest.fn((_) => {
+    const callback = jest.fn(() => {
       throw new Error('test error');
     });
     const result = await handleWithCallback(
-      adaptorMock as IntegrationsAdaptor,
       responseMock as OpenSearchDashboardsResponseFactory,
       callback
     );
