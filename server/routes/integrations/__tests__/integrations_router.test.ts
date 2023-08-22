@@ -132,7 +132,7 @@ describe('getIntegrationByName', () => {
 
     expect(mockAdaptor.getIntegrationTemplates).toHaveBeenCalledTimes(1);
     expect(mockResponseFactory.custom).toHaveBeenCalledWith({
-      body: 'Not found',
+      body: "Integration 'sample' not found",
       statusCode: 404,
     });
   });

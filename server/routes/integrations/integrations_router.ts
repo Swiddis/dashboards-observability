@@ -74,7 +74,10 @@ export const getIntegrationByName = (
     if (result.hits.length > 0) {
       return result.hits[0];
     }
-    return Promise.reject({ statusCode: 404, message: 'Not found' });
+    return Promise.reject({
+      statusCode: 404,
+      message: `Integration '${request.params.name}' not found`,
+    });
   });
 };
 
