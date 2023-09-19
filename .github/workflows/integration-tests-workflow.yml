@@ -37,21 +37,19 @@ jobs:
           java-version: '11'
 
       - name: Download observability artifact
-        uses: suisei-cn/actions-download-file@v1.4.0
+        uses: Swiddis/download-file@test-target
         with:
           url: https://aws.oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.opensearch.plugin&a=opensearch-observability&v=${{ env.OPENSEARCH_PLUGIN_VERSION }}-SNAPSHOT&p=zip
-          target: plugin-artifacts/
-          filename: observability.zip
+          target: plugin-artifacts/observability.zip
 
       - name: Download SQL artifact
-        uses: suisei-cn/actions-download-file@v1.4.0
+        uses: Swiddis/download-file@test-target
         with:
           url: https://aws.oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.opensearch.plugin&a=opensearch-sql-plugin&v=${{ env.OPENSEARCH_PLUGIN_VERSION }}-SNAPSHOT&p=zip
-          target: plugin-artifacts/
-          filename: sql.zip
+          target: plugin-artifacts/sql.zip
 
       - name: Download OpenSearch
-        uses: peternied/download-file@v2
+        uses: Swiddis/download-file@test-target
         with:
           url: https://artifacts.opensearch.org/snapshots/core/opensearch/${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/opensearch-min-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT-linux-x64-latest.tar.gz
 
