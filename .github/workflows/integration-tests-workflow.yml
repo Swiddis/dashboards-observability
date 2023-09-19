@@ -149,7 +149,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: OpenSearch-Dashboards/plugins/dashboards-observability
-          command: yarn cypress:parallel --browser chrome
+          command: yarn cypress:parallel --browser electron
           wait-on: 'http://localhost:5601'
         env:
           CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}
