@@ -23,10 +23,12 @@ import { INTEGRATIONS_BASE } from '../../../../common/constants/shared';
 import { IntegrationScreenshots } from './integration_screenshots_panel';
 import { AddIntegrationFlyout } from './add_integration_flyout';
 import { useToast } from '../../../../public/components/common/toast';
+import { USE_EXPERIMENTAL_SETUP_UI } from '../feature_flags';
 
 export function Integration(props: AvailableIntegrationProps) {
   const { http, integrationTemplateId, chrome } = props;
 
+  const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
   const { setToast } = useToast();
   const [integration, setIntegration] = useState({} as { name: string; type: string });
 
@@ -279,7 +281,11 @@ export function Integration(props: AvailableIntegrationProps) {
         {IntegrationOverview({
           integration,
           showFlyout: () => {
-            window.location.hash = `#/available/${integration.name}/setup`;
+            if (USE_EXPERIMENTAL_SETUP_UI) {
+              window.location.hash = `#/available/${integration.name}/setup`;
+            } else {
+              setIsFlyoutVisible(true);
+            }
           },
           setUpSample: () => {
             addIntegrationRequest(true, integrationTemplateId);
@@ -298,6 +304,19 @@ export function Integration(props: AvailableIntegrationProps) {
           : IntegrationFields({ integration, integrationMapping })}
         <EuiSpacer />
       </EuiPageBody>
+      {isFlyoutVisible && (
+        <AddIntegrationFlyout
+          onClose={() => {
+            setIsFlyoutVisible(false);
+          }}
+          onCreate={(name, dataSource) => {
+            addIntegrationRequest(false, integrationTemplateId, name, dataSource);
+          }}
+          integrationName={integrationTemplateId}
+          integrationType={integration.type}
+          http={http}
+        />
+      )}
     </EuiPage>
   );
 }
