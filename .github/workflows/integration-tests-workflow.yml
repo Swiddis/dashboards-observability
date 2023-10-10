@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 env:
   PLUGIN_NAME: dashboards-observability
-  OPENSEARCH_DASHBOARDS_VERSION: 'main'
+  OPENSEARCH_DASHBOARDS_VERSION: '2.9'
   OPENSEARCH_VERSION: '2.9.0'
   OPENSEARCH_PLUGIN_VERSION: '2.9.0.0'
 
