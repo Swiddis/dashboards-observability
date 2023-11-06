@@ -11,6 +11,7 @@ import {
   EuiSpacer,
   EuiFieldSearch,
   EuiButtonGroup,
+  EuiButton,
 } from '@elastic/eui';
 import _ from 'lodash';
 import React, { useState } from 'react';

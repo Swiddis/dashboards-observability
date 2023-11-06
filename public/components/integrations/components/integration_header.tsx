@@ -4,9 +4,22 @@
  */
 
 import {
+  EuiButton,
+  EuiButtonEmpty,
+  EuiComboBox,
+  EuiFieldText,
+  EuiFilePicker,
+  EuiFlyout,
+  EuiFlyoutBody,
+  EuiFlyoutHeader,
+  EuiForm,
+  EuiFormRow,
+  EuiHeader,
   EuiLink,
+  EuiModal,
   EuiPageHeader,
   EuiPageHeaderSection,
+  EuiSelect,
   EuiSpacer,
   EuiTab,
   EuiTabs,
@@ -16,6 +29,48 @@ import {
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { OPENSEARCH_DOCUMENTATION_URL } from '../../../../common/constants/integrations';
+
+export function IntegrationInstallFlyout({ onClose }: { onClose: () => void }) {
+  const [modality, setModality] = useState('zip');
+
+  const zipRow = (
+    <EuiFormRow label="Select a Zip file to install">
+      <EuiFilePicker accept=".zip" fullWidth />
+    </EuiFormRow>
+  );
+
+  const githubRepo = (
+    <EuiFormRow label="Enter a GitHub Repository Directory to track">
+      <EuiFieldText placeholder="https://github.com/opensearch-project/opensearch-catalog/tree/main/integrations/observability" />
+    </EuiFormRow>
+  );
+
+  return (
+    <EuiFlyout onClose={onClose} size="s">
+      <EuiFlyoutHeader>
+        <EuiTitle size="m">
+          <h2>Install Integrations</h2>
+        </EuiTitle>
+      </EuiFlyoutHeader>
+      <EuiFlyoutBody>
+        <EuiForm>
+          <EuiFormRow fullWidth label="Select a modality to install with">
+            <EuiSelect
+              options={[
+                { value: 'zip', text: 'Zip File' },
+                { value: 'github', text: 'GitHub Repository' },
+              ]}
+              value={modality}
+              onChange={(event) => setModality(event.target.value)}
+            />
+          </EuiFormRow>
+          {modality === 'zip' ? zipRow : null}
+          {modality === 'github' ? githubRepo : null}
+        </EuiForm>
+      </EuiFlyoutBody>
+    </EuiFlyout>
+  );
+}
 
 export function IntegrationHeader() {
   const tabs = [
@@ -34,6 +89,8 @@ export function IntegrationHeader() {
   const [selectedTabId, setSelectedTabId] = useState(
     window.location.hash.substring(2) ? window.location.hash.substring(2) : 'installed'
   );
+
+  const [showInstallFlyout, setShowInstallFlyout] = useState(false);
 
   const onSelectedTabChanged = (id) => {
     setSelectedTabId(id);
@@ -60,7 +117,15 @@ export function IntegrationHeader() {
             <h1>Integrations</h1>
           </EuiTitle>
         </EuiPageHeaderSection>
+        <EuiPageHeaderSection>
+          <EuiButtonEmpty iconType={'download'} onClick={() => setShowInstallFlyout(true)}>
+            Install
+          </EuiButtonEmpty>
+        </EuiPageHeaderSection>
       </EuiPageHeader>
+      {showInstallFlyout ? (
+        <IntegrationInstallFlyout onClose={() => setShowInstallFlyout(false)} />
+      ) : null}
       <EuiSpacer size="s" />
       <EuiText size="s" color="subdued">
         View integrations with preconfigured assets immediately within your OpenSearch setup.{' '}

@@ -24,6 +24,71 @@ exports[`Integration Header Test Renders integration header as expected 1`] = `
             </EuiTitle>
           </div>
         </EuiPageHeaderSection>
+        <EuiPageHeaderSection>
+          <div
+            className="euiPageHeaderSection"
+          >
+            <EuiButtonEmpty
+              iconType="download"
+              onClick={[Function]}
+            >
+              <button
+                className="euiButtonEmpty euiButtonEmpty--primary"
+                disabled={false}
+                onClick={[Function]}
+                type="button"
+              >
+                <EuiButtonContent
+                  className="euiButtonEmpty__content"
+                  iconSide="left"
+                  iconSize="m"
+                  iconType="download"
+                  textProps={
+                    Object {
+                      "className": "euiButtonEmpty__text",
+                    }
+                  }
+                >
+                  <span
+                    className="euiButtonContent euiButtonEmpty__content"
+                  >
+                    <EuiIcon
+                      className="euiButtonContent__icon"
+                      color="inherit"
+                      size="m"
+                      type="download"
+                    >
+                      <EuiIconEmpty
+                        aria-hidden={true}
+                        className="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
+                        focusable="false"
+                        role="img"
+                        style={null}
+                      >
+                        <svg
+                          aria-hidden={true}
+                          className="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
+                          focusable="false"
+                          height={16}
+                          role="img"
+                          style={null}
+                          viewBox="0 0 16 16"
+                          width={16}
+                          xmlns="http://www.w3.org/2000/svg"
+                        />
+                      </EuiIconEmpty>
+                    </EuiIcon>
+                    <span
+                      className="euiButtonEmpty__text"
+                    >
+                      Install
+                    </span>
+                  </span>
+                </EuiButtonContent>
+              </button>
+            </EuiButtonEmpty>
+          </div>
+        </EuiPageHeaderSection>
       </header>
     </EuiPageHeader>
     <EuiSpacer
