@@ -6,6 +6,7 @@
 import path from 'path';
 import { validateTemplate } from '../validators';
 import { FileSystemCatalogDataAdaptor } from './fs_data_adaptor';
+import { CatalogDataAdaptor } from './catalog_data_adaptor';
 
 /**
  * The Integration class represents the data for Integration Templates.

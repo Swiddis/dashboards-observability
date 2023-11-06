@@ -3,9 +3,58 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-type IntegrationPart = 'assets' | 'data' | 'schemas' | 'static';
+export type IntegrationPart = 'assets' | 'data' | 'schemas' | 'static';
 
-interface CatalogDataAdaptor {
+/**
+ * Parser for NDJson files (see https://github.com/ndjson/ndjson-spec).
+ * This parser silently ignores all empty lines.
+ *
+ * @param content The NDJson string to parse.
+ * @returns The parsed list of objects if no parsing errors encountered, otherwise null.
+ */
+export function tryParseNDJson(content: string): object[] | null {
+  try {
+    const objects = [];
+    for (const line of content.split('\n')) {
+      if (line.trim() === '') {
+        // Other OSD ndjson parsers skip whitespace lines
+        continue;
+      }
+      objects.push(JSON.parse(line));
+    }
+    return objects;
+  } catch (err: any) {
+    return null;
+  }
+}
+
+/**
+ * Helper function to compare version numbers.
+ * Assumes that the version numbers are valid, produces undefined behavior otherwise.
+ *
+ * @param a Left-hand number
+ * @param b Right-hand number
+ * @returns 1 if a < b, -1 if b < a, 0 otherwise.
+ */
+export function compareVersions(a: string, b: string): number {
+  const aParts = a.split('.').map(Number.parseInt);
+  const bParts = b.split('.').map(Number.parseInt);
+
+  for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+    const aValue = i < aParts.length ? aParts[i] : 0;
+    const bValue = i < bParts.length ? bParts[i] : 0;
+
+    if (aValue > bValue) {
+      return -1; // a > b
+    } else if (aValue < bValue) {
+      return 1; // a < b
+    }
+  }
+
+  return 0; // a == b
+}
+
+export interface CatalogDataAdaptor {
   /**
    * Reads a Json or NDJson file from the data source.
    *

@@ -6,6 +6,7 @@
 import * as path from 'path';
 import { IntegrationReader } from './integration';
 import { FileSystemCatalogDataAdaptor } from './fs_data_adaptor';
+import { CatalogDataAdaptor } from './catalog_data_adaptor';
 
 export class RepositoryReader {
   reader: CatalogDataAdaptor;
