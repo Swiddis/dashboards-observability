@@ -73,8 +73,8 @@ function convert_to_otel(tag, timestamp, record)
         },
         communication={
             source={
-                address="127.0.0.1",
-                ip=record.remote
+                address=record.remote,
+                ip=string.match(record.remote, "%d+\\.%d+\\.%d+\\.%d+") -- If it has an IP, add it
             }
         }
     }
