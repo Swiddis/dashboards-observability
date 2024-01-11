@@ -90,7 +90,7 @@ const integrationConnectionSelectorItems = [
   },
 ];
 
-const suggestDataSources = async (type: string): Promise<Array<{ label: string }>> => {
+export const suggestDataSources = async (type: string): Promise<Array<{ label: string }>> => {
   const http = coreRefs.http!;
   try {
     if (type === 'index') {
@@ -128,7 +128,7 @@ const suggestDataSources = async (type: string): Promise<Array<{ label: string }
   }
 };
 
-const runQuery = async (
+export const runQuery = async (
   query: string,
   datasource: string,
   sessionId: string | null
@@ -165,8 +165,11 @@ const runQuery = async (
             sessionId: newSessionId,
           },
         };
-        // Fail status can inconsistently be "failed" or "failure"
-      } else if (poll.status.toLowerCase().startsWith('fail')) {
+      } else if (
+        // Different failure string across versions
+        poll.status.toLowerCase() === 'failed' ||
+        poll.status.toLowerCase() === 'failure'
+      ) {
         return {
           ok: false,
           error: new Error(poll.error ?? 'No error information provided', { cause: poll }),
